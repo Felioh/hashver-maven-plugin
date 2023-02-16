@@ -160,30 +160,15 @@ public class ProjectsToBuildMojo extends HashVerMojo {
     }
 
     static File prjDbFile(File dbDir, MavenProject prj, String hashVer) {
-        // As usually when many files are stored on file system,
-        // do not store them in one plain directory, otherwise
-        // file system performance may degrade significantly when working
-        // with this directory (depends on file system).
-        // For example, see how .git/objects directory is organized.
-        //
+        // As usually when many files are stored on file system
         // We use the following structure:
         //
-        //     dbDir/artifactId-O.D/artifactId-hashversion
-        //
-        // where O and D are first digits of the artifact own hash and
-        // dependency tree hash.
+        //     dbDir/artifactId/artifactId-hashversion
         //
         // TODO: take includeGroupId into account here?
 
         String artifact = prj.getArtifactId();
-        int dotPos = hashVer.indexOf('.');
-        if (dotPos < 0) {
-            throw new IllegalArgumentException(
-                    "hashver is expected to have dot inside: " + hashVer);
-        }
-        String verGroup = hashVer.substring(0, 1)
-                + hashVer.substring(dotPos, dotPos + 2);
-        File groupDir = new File(dbDir, artifact + "-" + verGroup);
+        File groupDir = new File(dbDir, artifact);
         return new File(groupDir, hashVer);
     }
 }
